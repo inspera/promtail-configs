@@ -1,3 +1,3 @@
 # promtail-configs
 Config for promtail configuration
-Testing github webhoo
+Testing github webhook
