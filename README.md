@@ -1,3 +1,3 @@
 # promtail-configs
 Config for promtail configuration
-Testing github webhook event 7
+Testing github webhook event 8
