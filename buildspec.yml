@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+      - yum install -y aws-cli
+  pre_build:
+    commands:
+      - echo "Starting pre-build phase..."
+      - aws s3 ls s3://promtail-deploy-bucket/ || echo "S3 bucket is accessible"
+  build:
+    commands:
+      - echo "Building and packaging files..."
+      - cp -r * /tmp/promtail-configs
+      - echo "Files copied to /tmp/promtail-configs"
+  post_build:
+    commands:
+      - echo "Uploading files to S3 bucket..."
+      - aws s3 sync /tmp/promtail-configs s3://promtail-deploy-bucket/
+      - echo "Build process completed!"
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
+
