@@ -21,8 +21,8 @@ SERVER_FQDN=$(hostname -f)
 
 # Dynamically Match Log File Names
 ACCESS_LOG="/var/log/nginx/access.log"
-DEBUG_LOG="/applog/log/debug-${SERVER_FQDN}.log"
-REQUEST_LOG="/applog/log/requestlog-${SERVER_FQDN}.log"
+DEBUG_LOG="/applog/log/debug-*.log"
+REQUEST_LOG="/applog/log/requestlog-*.log"
 
 # Check if Log Files Exist
 if [[ ! -f "$ACCESS_LOG" ]]; then
@@ -30,14 +30,18 @@ if [[ ! -f "$ACCESS_LOG" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$DEBUG_LOG" ]]; then
-  echo "ERROR: Debug log file not found at $DEBUG_LOG. Exiting."
+if [[ -z $(ls $DEBUG_LOG 2>/dev/null) ]]; then
+  echo "ERROR: No debug log files found matching pattern $DEBUG_LOG. Exiting."
   exit 1
+else
+  echo "Debug log files found: $(ls $DEBUG_LOG)"
 fi
 
-if [[ ! -f "$REQUEST_LOG" ]]; then
-  echo "ERROR: Request log file not found at $REQUEST_LOG. Exiting."
+if [[ -z $(ls $REQUEST_LOG 2>/dev/null) ]]; then
+  echo "ERROR: No request log files found matching pattern $REQUEST_LOG. Exiting."
   exit 1
+else
+  echo "Request log files found: $(ls $REQUEST_LOG)"
 fi
 
 # Loki URL and Headers
@@ -137,3 +141,4 @@ scrape_configs:
 EOF
 
 echo "Promtail configuration generated successfully at ${OUTPUT_CONFIG}"
+
