@@ -41,7 +41,8 @@ if [[ ! -f "$REQUEST_LOG" ]]; then
 fi
 
 # Loki URL and Headers
-LOKI_URL="http://10.0.0.8:3100/loki/api/v1/push"
+LOKI_URL="http://aeae2830b4456423599b02891a824617-efa7884bdea4bbc1.elb.eu-west-1.amazonaws.com/loki/api/v1/push"
+LOKI_HEADER="X-Scope-OrgID: D4F80F363D152557B506E690D734091A"
 
 # Generate blacklist regex dynamically
 generate_blacklist_regex() {
@@ -96,8 +97,6 @@ scrape_configs:
           expression: '^(?P<client_ip>\S+) \S+ (?P<domain>\S+) .*'
       - drop:
           expression: "${DOMAIN_BLACKLIST_REGEX}"  # Drop blacklisted domains dynamically
-      - labels:
-          domain:
 
   # Debug Logs
   - job_name: debug-logs-${SERVER_NAME}
@@ -114,10 +113,6 @@ scrape_configs:
           expression: '^\[(?P<timestamp>[^\]]+)\] (?P<loglevel>\S+) \[(?P<requestid>\S+)\] (?P<marketplaceid>\S+): .*'
       - drop:
           expression: "${MARKETPLACEID_BLACKLIST_REGEX}"  # Drop blacklisted marketplace IDs dynamically
-      - labels:
-          loglevel:
-          requestid:
-          marketplaceid:
       - output:
           source: message
 
@@ -136,10 +131,6 @@ scrape_configs:
           expression: '^\[(?P<timestamp>[^\]]+)\] (?P<loglevel>\S+) \[(?P<requestid>\S+)\] (?P<marketplaceid>\S+): .*'
       - drop:
           expression: "${MARKETPLACEID_BLACKLIST_REGEX}"  # Drop blacklisted marketplace IDs dynamically
-      - labels:
-          loglevel:
-          requestid:
-          marketplaceid:
       - output:
           source: message
 
